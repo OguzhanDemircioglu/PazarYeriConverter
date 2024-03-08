@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using UI.Models;
 
 namespace UI.Controllers
 {
@@ -21,7 +19,7 @@ namespace UI.Controllers
         {
             return View();
         }
-    
+
 
     }
 }

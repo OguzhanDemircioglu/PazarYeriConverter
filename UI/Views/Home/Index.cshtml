@@ -1,9 +1,139 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kart Ekleme ve Eleman Ekleme Örneği</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="./js/jquery-3.6.1.js"></script>
+    <script src="./js/jquery-3.6.0.js"></script>
+    <script src="./js/jquery-ui.js"></script>
+    <style>
+        /* Basit bir CSS */
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            display: inline-block;
+        }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        .item {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-top: 5px;
+            padding: 5px;
+            cursor: pointer;
+        }
 
+        .item-container {
+            margin-top: 5px;
+            padding: 5px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <input type="text" id="cardContent" />
+        <button id="addCardButton">Kart Ekle</button>
+    </div>
+    <div id="cardContainer">
+        <!-- Kartların ekleneceği div -->
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Kartları ekleme butonuna click olayı ekle
+            $('#addCardButton').click(function () {
+                addCard();
+            });
+
+            // Kartları elemanların bırakılabileceği hale getirin
+            $(document).on('mouseenter', '.card', function () {
+                $(this).droppable({
+                    accept: '.item', // Sadece ".item" sınıfına sahip öğeleri kabul et
+                    drop: function (event, ui) {
+                        var droppedItem = ui.draggable.detach();
+                        $(this).find('.item-container').append(droppedItem);
+                        updateCard($(this));
+                    }
+                });
+            });
+        });
+
+        function addCard() {
+            // Kart içeriğini alın
+            var cardContent = $('#cardContent').val();
+
+            // Eğer içerik boşsa, işlem yapmayın
+            if (cardContent === '') {
+                alert('Lütfen bir içerik girin!');
+                return;
+            }
+
+            // Yeni bir kart divi oluşturun
+            var cardDiv = $('<div>').addClass('card');
+
+            // Kart başlığını ekleyin
+            cardDiv.html('<p>' + cardContent + '</p>');
+
+            // Kartları sürükleyebilir hale getir
+            cardDiv.draggable({
+                containment: '#cardContainer',
+                cursor: 'move'
+            });
+
+            // Yeni eleman eklemek için buton oluşturun
+            var addItemButton = $('<button>').text('Eleman Ekle').click(function () {
+                var itemContent = $(this).prev('.item-container').find('.item-input').val();
+                if (itemContent !== '') {
+                    var itemDiv = $('<div>').addClass('item').text(itemContent);
+
+                    // Elemanları sürükleyebilir hale getir
+                    itemDiv.draggable({
+                        revert: 'invalid', // Hedefe bırakılmadığında başlangıç konumuna geri dön
+                        cursor: 'move' // Sürükleme işlemi sırasında fare imlecini değiştir
+                    });
+
+                    $(this).prev('.item-container').append(itemDiv);
+                    $(this).prev('.item-container').find('.item-input').val('');
+                } else {
+                    alert('Lütfen bir eleman girin!');
+                }
+            });
+
+            // Yeni eleman eklemek için input oluşturun
+            var itemInput = $('<input>').attr('type', 'text').attr('placeholder', 'Eleman ekleyin').addClass('item-input');
+
+            // Kart divine eleman ekleme konteynırı oluşturun
+            var itemContainer = $('<div>').addClass('item-container');
+
+            // Konteynıra input ve butonu ekle
+            itemContainer.append(itemInput);
+            itemContainer.append(addItemButton);
+
+            // Kart divine konteynırı ekle
+            cardDiv.append(itemContainer);
+
+            // Kartı kartContainer'a ekleyin
+            $('#cardContainer').append(cardDiv);
+
+            // Input alanını temizleyin
+            $('#cardContent').val('');
+        }
+
+        // Kartın içeriğini güncelleyen fonksiyon
+        function updateCard(card) {
+            var items = card.find('.item');
+            var content = '';
+            items.each(function () {
+                content += $(this).text() + '<br>';
+            });
+            card.find('p').html(content);
+        }
+    </script>
+</body>
+</html>

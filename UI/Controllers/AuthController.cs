@@ -29,7 +29,7 @@ namespace UI.Controllers
         public IActionResult Login(LoginModel request)
         {
 
-            if (request.Username != "test")
+            if (request.Username != "1")
             {
 
                 ViewBag.Message = "Kullanıcı adı veya şifre yanlış";
@@ -37,7 +37,7 @@ namespace UI.Controllers
 
             }
 
-            if (request.Password != "test")
+            if (request.Password != "1")
             {
                 ViewBag.Message = "Kullanıcı adı veya şifre yanlış";
                 return View(request);
@@ -51,7 +51,7 @@ namespace UI.Controllers
 
             _authService.UpdateAccessToken(token);
 
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         private static string CreateToken(string key)
